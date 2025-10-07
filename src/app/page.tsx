@@ -253,23 +253,23 @@ export default function HomePage(): JSX.Element {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100">
+    <div>
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 lg:px-8">
-        <header className="rounded-3xl bg-slate-900/60 p-6 shadow-xl ring-1 ring-slate-800 backdrop-blur">
+        <header className="rounded-3xl border border-blue-200 bg-white p-6 shadow-lg">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
                 Prioritas Produk UMKM · Metode SAW
               </h1>
-              <p className="mt-1 max-w-2xl text-sm text-slate-300 sm:text-base">
+              <p className="mt-1 max-w-2xl text-sm text-blue-700 sm:text-base">
                 Sesuaikan bobot kriteria, kelola daftar produk, lalu hitung peringkat
                 otomatis untuk menentukan prioritas pengembangan produk.
               </p>
             </div>
-            <div className="flex flex-wrap gap-2 text-xs uppercase tracking-wide text-slate-400">
-              <span className="rounded-full border border-slate-700 px-3 py-1">Client-side</span>
-              <span className="rounded-full border border-slate-700 px-3 py-1">Simple Additive Weighting</span>
-              <span className="rounded-full border border-slate-700 px-3 py-1">Next.js · TSX</span>
+            <div className="flex flex-wrap gap-2 text-xs uppercase tracking-wide text-blue-700">
+              <span className="rounded-full border border-blue-200 px-3 py-1">Client-side</span>
+              <span className="rounded-full border border-blue-200 px-3 py-1">Simple Additive Weighting</span>
+              <span className="rounded-full border border-blue-200 px-3 py-1">Next.js · TSX</span>
             </div>
           </div>
         </header>
