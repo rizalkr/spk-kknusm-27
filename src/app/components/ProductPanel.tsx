@@ -104,14 +104,14 @@ export function ProductPanel({
               {formError}
             </p>
           ) : (
-            <p className="mb-3 text-xs font-semibold text-[#7a94bf]">
+            <p className="mb-3 text-xs font-semibold text-slate-600">
               Isi seluruh field di atas lalu klik tambah produk. Nilai numerik dapat menggunakan desimal.
             </p>
           )}
           <button
             type="submit"
             disabled={!isFormValid}
-            className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-auto ${
+            className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition  focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-auto ${
               isFormValid
                 ? "bg-[#2f7bff] text-white shadow-lg shadow-[#2f7bff33] hover:bg-[#1f62e0] focus-visible:outline-[#2f7bff]"
                 : "cursor-not-allowed bg-white/30 text-[#93a8cf]"
@@ -166,7 +166,7 @@ export function ProductPanel({
                     <button
                       type="button"
                       onClick={() => onDeleteProduct(product.id)}
-                      className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-[#7a94bf] transition hover:border-[#ff5c8a4d] hover:bg-white/40 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a]"
+                      className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-[#7a94bf] transition hover:border-[#ff5c8a4d] hover:bg-white/40 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a]"
                       aria-label={`Hapus ${product.name}`}
                     >
                       <svg

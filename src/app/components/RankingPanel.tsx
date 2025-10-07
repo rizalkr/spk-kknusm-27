@@ -33,7 +33,7 @@ export function RankingPanel({
           type="button"
           onClick={onCalculate}
           disabled={!canCalculate}
-          className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+          className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition focus-visible:outline focus-visible:outline-offset-2 ${
             canCalculate
               ? "bg-[#2ecbb0] text-[#063a32] shadow-lg shadow-[#2ecbb033] hover:bg-[#21b29b] focus-visible:outline-[#2ecbb0]"
               : "cursor-not-allowed bg-white/30 text-[#93a8cf]"
