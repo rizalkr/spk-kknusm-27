@@ -22,7 +22,7 @@ export function RankingPanel({
 }: RankingPanelProps): JSX.Element {
   return (
     <div className="rounded-3xl bg-gradient-to-br from-white/65 via-white/35 to-white/15 p-6 shadow-xl shadow-[#2f7bff1f] ring-1 ring-white/45 backdrop-blur-xl">
-      <div className="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h2 className="text-xl font-bold text-[#0a1d46]">Panel Hasil Peringkat</h2>
           <p className="mt-1 text-sm font-medium text-slate-600">
@@ -33,7 +33,7 @@ export function RankingPanel({
           type="button"
           onClick={onCalculate}
           disabled={!canCalculate}
-          className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition focus-visible:outline focus-visible:outline-offset-2 ${
+          className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition focus-visible:outline focus-visible:outline-offset-2 sm:w-auto ${
             canCalculate
               ? "bg-[#2ecbb0] text-[#063a32] shadow-lg shadow-[#2ecbb033] hover:bg-[#21b29b] focus-visible:outline-[#2ecbb0]"
               : "cursor-not-allowed bg-white/30 text-[#93a8cf]"
@@ -57,18 +57,48 @@ export function RankingPanel({
       </div>
 
       {!canCalculate && (
-  <p className="mt-3 text-xs font-semibold text-[#b6801a]">
+        <p className="mt-3 text-xs font-semibold text-[#b6801a]">
           Pastikan total bobot bernilai 100% dan minimal satu produk tersedia untuk mengaktifkan kalkulasi.
         </p>
       )}
 
       {isResultStale && hasProducts && (
-  <div className="mt-4 rounded-xl border border-[#f7b74066] bg-white/75 px-4 py-3 text-sm font-semibold text-[#b6801a] backdrop-blur">
+        <div className="mt-4 rounded-xl border border-[#f7b74066] bg-white/75 px-4 py-3 text-sm font-semibold text-[#b6801a] backdrop-blur">
           Data terbaru belum dihitung. Tekan tombol kalkulasi untuk memperbarui peringkat.
         </div>
       )}
 
-      <div className="mt-6 overflow-hidden rounded-2xl border border-white/35 bg-white/25 backdrop-blur-lg">
+      <div className="mt-6 space-y-4 md:hidden">
+        {rankings.length > 0 ? (
+          rankings.map((result) => (
+            <div
+              key={result.product.id}
+              className="rounded-2xl border border-white/35 bg-white/35 p-4 shadow-lg shadow-[#2f7bff1f] backdrop-blur"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf]">
+                    Peringkat
+                  </p>
+                  <p className="text-2xl font-bold text-[#1d3f7a]">#{result.rank}</p>
+                </div>
+                <span className="rounded-full border border-[#9bb8e8] bg-white/60 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#1d3f7a]">
+                  Skor&nbsp;{formatScore(result.score)}
+                </span>
+              </div>
+              <p className="mt-4 text-base font-semibold text-[#0a1d46]">
+                {result.product.name}
+              </p>
+            </div>
+          ))
+        ) : (
+          <div className="rounded-2xl border border-white/35 bg-white/25 p-4 text-center text-sm font-semibold text-[#7a94bf] backdrop-blur">
+            Belum ada hasil yang dapat ditampilkan. Tambahkan produk dan lakukan kalkulasi untuk melihat peringkat.
+          </div>
+        )}
+      </div>
+
+      <div className="mt-6 hidden overflow-hidden rounded-2xl border border-white/35 bg-white/25 backdrop-blur-lg md:block">
         <div className="max-h-96 overflow-x-auto">
           <table className="min-w-full divide-y divide-white/25 text-sm text-[#0a1d46]">
             <thead className="bg-white/40 text-left text-xs font-semibold uppercase tracking-wide text-[#1d3f7a] backdrop-blur">

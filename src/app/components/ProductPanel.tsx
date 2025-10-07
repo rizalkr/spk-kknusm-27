@@ -28,14 +28,14 @@ export function ProductPanel({
 
   return (
     <div className="rounded-3xl bg-gradient-to-br from-white/65 via-white/35 to-white/15 p-6 shadow-xl shadow-[#2f7bff1f] ring-1 ring-white/45 backdrop-blur-xl">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-xl font-bold text-[#0a1d46]">Panel Manajemen Produk</h2>
           <p className="mt-1 text-sm font-medium text-slate-600">
             Tambahkan produk baru, lengkapi data numerik, dan kelola daftar kandidat prioritas.
           </p>
         </div>
-  <span className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf]">
+        <span className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf] sm:self-end sm:text-right">
           Total Produk: {products.length}
         </span>
       </div>
@@ -111,7 +111,7 @@ export function ProductPanel({
           <button
             type="submit"
             disabled={!isFormValid}
-            className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition  focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-auto ${
+            className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-auto ${
               isFormValid
                 ? "bg-[#2f7bff] text-white shadow-lg shadow-[#2f7bff33] hover:bg-[#1f62e0] focus-visible:outline-[#2f7bff]"
                 : "cursor-not-allowed bg-white/30 text-[#93a8cf]"
@@ -135,7 +135,75 @@ export function ProductPanel({
         </div>
       </form>
 
-      <div className="mt-6 overflow-hidden rounded-2xl border border-white/35 bg-white/25 backdrop-blur-lg">
+      <div className="mt-6 space-y-4 md:hidden">
+        {hasProducts ? (
+          products.map((product) => (
+            <div
+              key={product.id}
+              className="rounded-2xl border border-white/35 bg-white/35 p-4 shadow-lg shadow-[#2f7bff1f] backdrop-blur"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="space-y-1">
+                  <h3 className="text-base font-bold text-[#0a1d46]">{product.name}</h3>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf]">
+                    Produk Prioritas
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onDeleteProduct(product.id)}
+                  className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-[#7a94bf] transition hover:border-[#ff5c8a4d] hover:bg-white/50 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a]"
+                  aria-label={`Hapus ${product.name}`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-4 w-4"
+                  >
+                    <path d="M3 6h18" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    <line x1="10" x2="10" y1="11" y2="17" />
+                    <line x1="14" x2="14" y1="11" y2="17" />
+                  </svg>
+                </button>
+              </div>
+
+              <dl className="mt-4 grid grid-cols-2 gap-3 text-sm font-semibold text-[#1d3f7a]">
+                <div>
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf]">
+                    Keuntungan
+                  </dt>
+                  <dd className="text-base">Rp&nbsp;{formatNumber(product.profit)}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf]">
+                    Penjualan
+                  </dt>
+                  <dd className="text-base">{formatNumber(product.sales)} unit</dd>
+                </div>
+                <div className="col-span-2">
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf]">
+                    Biaya Produksi
+                  </dt>
+                  <dd className="text-base">Rp&nbsp;{formatNumber(product.cost)}</dd>
+                </div>
+              </dl>
+            </div>
+          ))
+        ) : (
+          <div className="rounded-2xl border border-white/35 bg-white/25 p-4 text-center text-sm font-semibold text-[#7a94bf] backdrop-blur">
+            Belum ada produk terdaftar. Tambahkan minimal satu produk untuk memulai perhitungan.
+          </div>
+        )}
+      </div>
+
+      <div className="mt-6 hidden overflow-hidden rounded-2xl border border-white/35 bg-white/25 backdrop-blur-lg md:block">
         <div className="max-h-72 overflow-x-auto">
           <table className="min-w-full divide-y divide-white/25 text-sm text-[#0a1d46]">
             <thead className="bg-white/40 text-left text-xs font-semibold uppercase tracking-wide text-[#1d3f7a] backdrop-blur">
