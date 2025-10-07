@@ -27,15 +27,15 @@ export function ProductPanel({
   const hasProducts = products.length > 0;
 
   return (
-    <div className="rounded-3xl bg-slate-900/60 p-6 shadow-xl ring-1 ring-slate-800 backdrop-blur">
+    <div className="rounded-3xl bg-gradient-to-br from-white/65 via-white/35 to-white/15 p-6 shadow-xl shadow-[#2f7bff1f] ring-1 ring-white/45 backdrop-blur-xl">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-white">Panel Manajemen Produk</h2>
-          <p className="mt-1 text-sm text-slate-300">
+          <h2 className="text-xl font-bold text-[#0a1d46]">Panel Manajemen Produk</h2>
+          <p className="mt-1 text-sm font-medium text-slate-600">
             Tambahkan produk baru, lengkapi data numerik, dan kelola daftar kandidat prioritas.
           </p>
         </div>
-        <span className="text-xs uppercase tracking-wide text-slate-500">
+  <span className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf]">
           Total Produk: {products.length}
         </span>
       </div>
@@ -45,18 +45,18 @@ export function ProductPanel({
         onSubmit={onFormSubmit}
       >
         <label className="flex flex-col gap-2 sm:col-span-2">
-          <span className="text-sm font-medium text-slate-300">Nama Produk</span>
+          <span className="text-sm font-semibold text-[#0a1d46]">Nama Produk</span>
           <input
             type="text"
             name="name"
             placeholder="Contoh: Kopi Susu Kekinian"
             value={formValues.name}
             onChange={onFormValueChange}
-            className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-2.5 text-base text-white shadow-inner focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+            className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-2.5 text-base text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff]"
           />
         </label>
         <label className="flex flex-col gap-2">
-          <span className="text-sm font-medium text-slate-300">Keuntungan</span>
+          <span className="text-sm font-semibold text-[#0a1d46]">Keuntungan</span>
           <input
             type="number"
             name="profit"
@@ -66,11 +66,11 @@ export function ProductPanel({
             value={formValues.profit}
             onChange={onFormValueChange}
             placeholder="Rp"
-            className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-2.5 text-base text-white shadow-inner focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+            className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-2.5 text-base text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff]"
           />
         </label>
         <label className="flex flex-col gap-2">
-          <span className="text-sm font-medium text-slate-300">Jumlah Penjualan</span>
+          <span className="text-sm font-semibold text-[#0a1d46]">Jumlah Penjualan</span>
           <input
             type="number"
             name="sales"
@@ -80,11 +80,11 @@ export function ProductPanel({
             value={formValues.sales}
             onChange={onFormValueChange}
             placeholder="Unit"
-            className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-2.5 text-base text-white shadow-inner focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+            className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-2.5 text-base text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff]"
           />
         </label>
         <label className="flex flex-col gap-2">
-          <span className="text-sm font-medium text-slate-300">Biaya Produksi</span>
+          <span className="text-sm font-semibold text-[#0a1d46]">Biaya Produksi</span>
           <input
             type="number"
             name="cost"
@@ -94,27 +94,27 @@ export function ProductPanel({
             value={formValues.cost}
             onChange={onFormValueChange}
             placeholder="Rp"
-            className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-2.5 text-base text-white shadow-inner focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+            className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-2.5 text-base text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff]"
           />
         </label>
 
         <div className="sm:col-span-2 lg:col-span-4">
           {formError ? (
-            <p className="mb-3 rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+            <p className="mb-3 rounded-xl border border-[#f7b74066] bg-white/75 px-4 py-3 text-sm font-semibold text-[#b6801a] backdrop-blur">
               {formError}
             </p>
           ) : (
-            <p className="mb-3 text-xs text-slate-400">
+            <p className="mb-3 text-xs font-semibold text-[#7a94bf]">
               Isi seluruh field di atas lalu klik tambah produk. Nilai numerik dapat menggunakan desimal.
             </p>
           )}
           <button
             type="submit"
             disabled={!isFormValid}
-            className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-auto ${
+            className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-auto ${
               isFormValid
-                ? "bg-sky-500 text-white shadow-lg shadow-sky-500/30 hover:bg-sky-400 focus-visible:outline-sky-500"
-                : "cursor-not-allowed bg-slate-800 text-slate-500"
+                ? "bg-[#2f7bff] text-white shadow-lg shadow-[#2f7bff33] hover:bg-[#1f62e0] focus-visible:outline-[#2f7bff]"
+                : "cursor-not-allowed bg-white/30 text-[#93a8cf]"
             }`}
           >
             <span>Tambah Produk</span>
@@ -135,10 +135,10 @@ export function ProductPanel({
         </div>
       </form>
 
-      <div className="mt-6 overflow-hidden rounded-2xl border border-slate-800">
+      <div className="mt-6 overflow-hidden rounded-2xl border border-white/35 bg-white/25 backdrop-blur-lg">
         <div className="max-h-72 overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-800 text-sm">
-            <thead className="bg-slate-900/80 text-left text-xs uppercase tracking-wide text-slate-400">
+          <table className="min-w-full divide-y divide-white/25 text-sm text-[#0a1d46]">
+            <thead className="bg-white/40 text-left text-xs font-semibold uppercase tracking-wide text-[#1d3f7a] backdrop-blur">
               <tr>
                 <th className="px-4 py-3">Nama Produk</th>
                 <th className="px-4 py-3 text-right">Keuntungan</th>
@@ -147,26 +147,26 @@ export function ProductPanel({
                 <th className="px-4 py-3 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800">
+            <tbody className="divide-y divide-white/20">
               {products.map((product) => (
-                <tr key={product.id} className="bg-slate-900/40 text-slate-200">
-                  <td className="px-4 py-3 text-sm font-medium">
+                <tr key={product.id} className="bg-white/35 text-[#0a1d46] backdrop-blur">
+                  <td className="px-4 py-3 text-sm font-semibold text-[#0a1d46]">
                     <p>{product.name}</p>
                   </td>
-                  <td className="px-4 py-3 text-right font-semibold">
+                  <td className="px-4 py-3 text-right font-bold text-[#1d3f7a]">
                     Rp&nbsp;{formatNumber(product.profit)}
                   </td>
-                  <td className="px-4 py-3 text-right font-semibold">
+                  <td className="px-4 py-3 text-right font-bold text-[#1d3f7a]">
                     {formatNumber(product.sales)} unit
                   </td>
-                  <td className="px-4 py-3 text-right font-semibold">
+                  <td className="px-4 py-3 text-right font-bold text-[#1d3f7a]">
                     Rp&nbsp;{formatNumber(product.cost)}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button
                       type="button"
                       onClick={() => onDeleteProduct(product.id)}
-                      className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-slate-400 transition hover:border-slate-700 hover:bg-slate-800 hover:text-rose-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400"
+                      className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-[#7a94bf] transition hover:border-[#ff5c8a4d] hover:bg-white/40 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a]"
                       aria-label={`Hapus ${product.name}`}
                     >
                       <svg
@@ -192,7 +192,7 @@ export function ProductPanel({
               {!hasProducts && (
                 <tr>
                   <td
-                    className="px-4 py-6 text-center text-sm text-slate-400"
+                    className="px-4 py-6 text-center text-sm text-[#7a94bf]"
                     colSpan={5}
                   >
                     Belum ada produk terdaftar. Tambahkan minimal satu produk untuk memulai perhitungan.
