@@ -24,3 +24,10 @@ export type ProductFormValues = {
   sales: string;
   cost: string;
 };
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+};

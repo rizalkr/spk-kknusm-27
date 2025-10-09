@@ -33,10 +33,10 @@ export function RankingPanel({
           type="button"
           onClick={onCalculate}
           disabled={!canCalculate}
-          className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition focus-visible:outline focus-visible:outline-offset-2 sm:w-auto ${
+          className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-auto ${
             canCalculate
               ? "bg-[#2ecbb0] text-[#063a32] shadow-lg shadow-[#2ecbb033] hover:bg-[#21b29b] focus-visible:outline-[#2ecbb0]"
-              : "cursor-not-allowed bg-white/30 text-[#93a8cf]"
+              : "cursor-not-allowed bg-[#d6f5ee] text-[#7dad9f]"
           }`}
         >
           <svg
@@ -57,7 +57,7 @@ export function RankingPanel({
       </div>
 
       {!canCalculate && (
-        <p className="mt-3 text-xs font-semibold text-[#b6801a]">
+        <p className="mt-3 text-xs font-semibold text-slate-800">
           Pastikan total bobot bernilai 100% dan minimal satu produk tersedia untuk mengaktifkan kalkulasi.
         </p>
       )}

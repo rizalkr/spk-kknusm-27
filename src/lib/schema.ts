@@ -17,11 +17,22 @@ export const weights = pgTable("weights", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const users = pgTable("users", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  role: text("role").default("member").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export type ProductRow = typeof products.$inferSelect;
 export type InsertProductRow = typeof products.$inferInsert;
 
 export type WeightRow = typeof weights.$inferSelect;
 export type InsertWeightRow = typeof weights.$inferInsert;
+
+export type UserRow = typeof users.$inferSelect;
+export type InsertUserRow = typeof users.$inferInsert;
 
 export const DEFAULT_WEIGHTS_ID = "default";
 export const DEFAULT_WEIGHTS = {
