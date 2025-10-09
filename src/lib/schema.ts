@@ -1,4 +1,4 @@
-import { pgTable, text, numeric, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, numeric, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 export const products = pgTable("products", {
   id: text("id").primaryKey(),
@@ -17,13 +17,20 @@ export const weights = pgTable("weights", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
-export const users = pgTable("users", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  role: text("role").default("member").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+export const users = pgTable(
+  "users",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    passwordHash: text("password_hash").notNull(),
+    role: text("role").default("member").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    emailIdx: uniqueIndex("users_email_idx").on(table.email),
+  })
+);
 
 export type ProductRow = typeof products.$inferSelect;
 export type InsertProductRow = typeof products.$inferInsert;

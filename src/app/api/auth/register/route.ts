@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
-import { asc } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { hash } from "bcryptjs";
 import { db, schema } from "@/lib/db";
 import type { User } from "@/app/types";
@@ -12,28 +12,17 @@ const mapUser = (row: typeof schema.users.$inferSelect): User => ({
   role: row.role,
 });
 
-export async function GET(): Promise<Response> {
-  try {
-    const records = await db.select().from(schema.users).orderBy(asc(schema.users.createdAt));
-
-    return NextResponse.json({ users: records.map(mapUser) });
-  } catch (error) {
-    console.error("Failed to fetch users", error);
-    return NextResponse.json({ error: "Gagal memuat data pengguna." }, { status: 500 });
-  }
-}
-
 export async function POST(request: Request): Promise<Response> {
   try {
     const body = await request.json();
+
     const name: unknown = body?.name;
     const email: unknown = body?.email;
-    const role: unknown = body?.role;
-  const password: unknown = body?.password;
+    const password: unknown = body?.password;
 
     if (typeof name !== "string" || name.trim().length < 3) {
       return NextResponse.json(
-        { error: "Nama pengguna wajib diisi minimal 3 karakter." },
+        { error: "Nama lengkap minimal 3 karakter." },
         { status: 400 }
       );
     }
@@ -52,8 +41,20 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    const normalizedRole =
-      typeof role === "string" && role.trim().length > 0 ? role.trim().toLowerCase() : "member";
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const [existing] = await db
+      .select({ id: schema.users.id })
+      .from(schema.users)
+      .where(eq(schema.users.email, normalizedEmail))
+      .limit(1);
+
+    if (existing) {
+      return NextResponse.json(
+        { error: "Email sudah terdaftar. Silakan gunakan email lain." },
+        { status: 409 }
+      );
+    }
 
     const passwordHash = await hash(password.trim(), 12);
 
@@ -62,9 +63,9 @@ export async function POST(request: Request): Promise<Response> {
       .values({
         id: randomUUID(),
         name: name.trim(),
-        email: email.trim().toLowerCase(),
+        email: normalizedEmail,
         passwordHash,
-        role: normalizedRole,
+        role: "member",
       })
       .returning();
 
@@ -72,9 +73,18 @@ export async function POST(request: Request): Promise<Response> {
       throw new Error("Insert returned no result");
     }
 
-    return NextResponse.json({ user: mapUser(inserted) }, { status: 201 });
+    return NextResponse.json(
+      {
+        user: mapUser(inserted),
+        message: "Registrasi berhasil. Silakan masuk untuk melanjutkan.",
+      },
+      { status: 201 }
+    );
   } catch (error) {
-    console.error("Failed to create user", error);
-    return NextResponse.json({ error: "Gagal menambahkan pengguna." }, { status: 500 });
+    console.error("Failed to register user", error);
+    return NextResponse.json(
+      { error: "Terjadi kesalahan saat registrasi pengguna." },
+      { status: 500 }
+    );
   }
 }

@@ -15,7 +15,8 @@
     "react-dom": "19.1.0",
     "next": "15.5.4",
     "@neondatabase/serverless": "^0.10.4",
-    "drizzle-orm": "^0.44.6"
+  "drizzle-orm": "^0.44.6",
+  "bcryptjs": "^2.4.3"
   },
   "devDependencies": {
     "typescript": "^5",
