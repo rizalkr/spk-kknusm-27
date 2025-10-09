@@ -8,10 +8,13 @@ export type ProductPanelProps = {
   formValues: ProductFormValues;
   formError: string | null;
   isFormValid: boolean;
-  onFormSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onFormSubmit: (event: FormEvent<HTMLFormElement>) => void | Promise<void>;
   onFormValueChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  onDeleteProduct: (productId: string) => void;
+  onDeleteProduct: (productId: string) => void | Promise<void>;
   formatNumber: (value: number) => string;
+  isSubmitting?: boolean;
+  deletingProductId?: string | null;
+  isLoading?: boolean;
 };
 
 export function ProductPanel({
@@ -23,6 +26,9 @@ export function ProductPanel({
   onFormValueChange,
   onDeleteProduct,
   formatNumber,
+  isSubmitting = false,
+  deletingProductId = null,
+  isLoading = false,
 }: ProductPanelProps): JSX.Element {
   const hasProducts = products.length > 0;
 
@@ -36,7 +42,7 @@ export function ProductPanel({
           </p>
         </div>
         <span className="text-xs font-semibold uppercase tracking-wide text-slate-800 sm:self-end sm:text-right">
-          Total Produk: {products.length}
+          {isLoading ? "Memuat produk..." : `Total Produk: ${products.length}`}
         </span>
       </div>
 
@@ -110,14 +116,14 @@ export function ProductPanel({
           )}
           <button
             type="submit"
-            disabled={!isFormValid}
+            disabled={!isFormValid || isSubmitting}
             className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-auto ${
-              isFormValid
+              isFormValid && !isSubmitting
                 ? "bg-[#2ecbb0] text-[#063a32] shadow-lg shadow-[#2ecbb033] hover:bg-[#21b29b] focus-visible:outline-[#2ecbb0]"
                 : "cursor-not-allowed bg-[#d6f5ee] text-[#7dad9f]"
             }`}
           >
-            <span>Tambah Produk</span>
+            <span>{isSubmitting ? "Menyimpan..." : "Tambah Produk"}</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -152,7 +158,8 @@ export function ProductPanel({
                 <button
                   type="button"
                   onClick={() => onDeleteProduct(product.id)}
-                  className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-slate-800 transition hover:border-[#ff5c8a4d] hover:bg-white/50 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a]"
+                  disabled={deletingProductId === product.id}
+                  className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-slate-800 transition hover:border-[#ff5c8a4d] hover:bg-white/50 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a] disabled:cursor-not-allowed disabled:opacity-60"
                   aria-label={`Hapus ${product.name}`}
                 >
                   <svg
@@ -198,7 +205,9 @@ export function ProductPanel({
           ))
         ) : (
           <div className="rounded-2xl border border-white/35 bg-white/25 p-4 text-center text-sm font-semibold text-slate-800 backdrop-blur">
-            Belum ada produk terdaftar. Tambahkan minimal satu produk untuk memulai perhitungan.
+            {isLoading
+              ? "Memuat data produk dari server..."
+              : "Belum ada produk terdaftar. Tambahkan minimal satu produk untuk memulai perhitungan."}
           </div>
         )}
       </div>
@@ -234,7 +243,8 @@ export function ProductPanel({
                     <button
                       type="button"
                       onClick={() => onDeleteProduct(product.id)}
-                      className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-slate-800 transition hover:border-[#ff5c8a4d] hover:bg-white/40 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a]"
+                      disabled={deletingProductId === product.id}
+                      className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-slate-800 transition hover:border-[#ff5c8a4d] hover:bg-white/40 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a] disabled:cursor-not-allowed disabled:opacity-60"
                       aria-label={`Hapus ${product.name}`}
                     >
                       <svg
@@ -263,7 +273,9 @@ export function ProductPanel({
                     className="px-4 py-6 text-center text-sm text-slate-800"
                     colSpan={5}
                   >
-                    Belum ada produk terdaftar. Tambahkan minimal satu produk untuk memulai perhitungan.
+                    {isLoading
+                      ? "Memuat data produk dari server..."
+                      : "Belum ada produk terdaftar. Tambahkan minimal satu produk untuk memulai perhitungan."}
                   </td>
                 </tr>
               )}

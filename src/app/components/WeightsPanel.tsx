@@ -10,6 +10,8 @@ export type WeightsPanelProps = {
   onWeightChange: (
     key: keyof Weights
   ) => (event: ChangeEvent<HTMLInputElement>) => void;
+  isSaving?: boolean;
+  isLoading?: boolean;
 };
 
 export function WeightsPanel({
@@ -17,6 +19,8 @@ export function WeightsPanel({
   totalWeightDisplay,
   isWeightValid,
   onWeightChange,
+  isSaving = false,
+  isLoading = false,
 }: WeightsPanelProps): JSX.Element {
   return (
     <div className="rounded-3xl bg-gradient-to-br from-white/65 via-white/35 to-white/15 p-6 shadow-xl shadow-[#2f7bff1f] ring-1 ring-white/45 backdrop-blur-xl">
@@ -51,7 +55,8 @@ export function WeightsPanel({
             step={1}
             value={weights.profit}
             onChange={onWeightChange("profit")}
-            className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-2.5 text-base font-medium text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff]"
+            disabled={isLoading}
+            className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-2.5 text-base font-medium text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff] disabled:cursor-not-allowed disabled:bg-white/40"
           />
         </label>
         <label className="flex flex-col gap-2">
@@ -66,7 +71,8 @@ export function WeightsPanel({
             step={1}
             value={weights.sales}
             onChange={onWeightChange("sales")}
-            className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-2.5 text-base font-medium text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff]"
+            disabled={isLoading}
+            className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-2.5 text-base font-medium text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff] disabled:cursor-not-allowed disabled:bg-white/40"
           />
         </label>
         <label className="flex flex-col gap-2">
@@ -81,7 +87,8 @@ export function WeightsPanel({
             step={1}
             value={weights.cost}
             onChange={onWeightChange("cost")}
-            className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-2.5 text-base font-medium text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff]"
+            disabled={isLoading}
+            className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-2.5 text-base font-medium text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff] disabled:cursor-not-allowed disabled:bg-white/40"
           />
         </label>
       </div>
@@ -94,6 +101,14 @@ export function WeightsPanel({
         {isWeightValid
           ? "Bobot valid. Anda siap menghitung peringkat produk."
           : `Total bobot harus 100%. Saat ini ${totalWeightDisplay}%.`}
+      </p>
+
+      <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-slate-800">
+        {isLoading
+          ? "Memuat bobot dari server..."
+          : isSaving
+          ? "Menyimpan perubahan bobot..."
+          : "Bobot otomatis tersimpan."}
       </p>
     </div>
   );

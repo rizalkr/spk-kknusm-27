@@ -11,6 +11,7 @@ import {
   useState,
 } from "react";
 
+import { calculateSAWRanking } from "@/lib/calculateSaw";
 import { ProductPanel } from "./components/ProductPanel";
 import { RankingPanel } from "./components/RankingPanel";
 import { WeightsPanel } from "./components/WeightsPanel";
@@ -22,35 +23,18 @@ import type {
   Weights,
 } from "./types";
 
-const INITIAL_WEIGHTS: Weights = {
+const DEFAULT_WEIGHTS: Weights = {
   profit: 40,
   sales: 40,
   cost: 20,
 };
 
-const INITIAL_PRODUCTS: Product[] = [
-  {
-    id: "prd-1",
-    name: "Keripik Pisang Madina",
-    profit: 7500000,
-    sales: 1250,
-    cost: 3200000,
-  },
-  {
-    id: "prd-2",
-    name: "Kopi Arabika Gayo",
-    profit: 6800000,
-    sales: 980,
-    cost: 2800000,
-  },
-  {
-    id: "prd-3",
-    name: "Sambal Botol Andaliman",
-    profit: 5200000,
-    sales: 1410,
-    cost: 2400000,
-  },
-];
+const EMPTY_FORM_VALUES: ProductFormValues = {
+  name: "",
+  profit: "",
+  sales: "",
+  cost: "",
+};
 
 const integerFormatter = new Intl.NumberFormat("id-ID", {
   maximumFractionDigits: 0,
@@ -61,78 +45,76 @@ const scoreFormatter = new Intl.NumberFormat("id-ID", {
   maximumFractionDigits: 4,
 });
 
-const generateProductId = (): string =>
-  `prd-${Math.random().toString(36).slice(2, 7)}-${Date.now().toString(36)}`;
-
-/**
- * Jalankan algoritma Simple Additive Weighting untuk menghitung ranking produk.
- * Langkah-langkahnya:
- * 1. Cari nilai maksimum (benefit) & minimum (cost) untuk normalisasi matriks.
- * 2. Normalisasikan setiap kriteria sesuai jenisnya (benefit atau cost).
- * 3. Hitung skor akhir dengan mengalikan bobot dan menjumlahkan seluruh kriteria.
- * 4. Urutkan produk dari skor tertinggi ke terendah untuk mendapatkan peringkat.
- */
-const calculateSAWRanking = (products: Product[], weights: Weights): SAWResult[] => {
-  if (products.length === 0) {
-    return [];
-  }
-
-  const profitMax = Math.max(...products.map((product) => product.profit));
-  const salesMax = Math.max(...products.map((product) => product.sales));
-  const costMin = Math.min(...products.map((product) => product.cost));
-
-  const weightFactor = {
-    profit: weights.profit / 100,
-    sales: weights.sales / 100,
-    cost: weights.cost / 100,
-  };
-
-  const scoredProducts = products.map((product) => {
-    // Normalisasi kriteria benefit menggunakan nilai maksimum.
-    const normalizedProfit = profitMax === 0 ? 0 : product.profit / profitMax;
-    const normalizedSales = salesMax === 0 ? 0 : product.sales / salesMax;
-
-    // Normalisasi kriteria cost menggunakan nilai minimum.
-    const normalizedCost =
-      product.cost === 0
-        ? 1
-        : costMin === 0
-        ? 1
-        : costMin / product.cost;
-
-    const score =
-      normalizedProfit * weightFactor.profit +
-      normalizedSales * weightFactor.sales +
-      normalizedCost * weightFactor.cost;
-
-    return { product, score };
-  });
-
-  return scoredProducts
-    .sort((first, second) => second.score - first.score)
-    .map((entry, index) => ({ ...entry, rank: index + 1 }));
-};
-
 export default function HomePage(): JSX.Element {
-  const [weights, setWeights] = useState<Weights>(INITIAL_WEIGHTS);
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [formValues, setFormValues] = useState<ProductFormValues>({
-    name: "",
-    profit: "",
-    sales: "",
-    cost: "",
-  });
+  const [weights, setWeights] = useState<Weights>(DEFAULT_WEIGHTS);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [formValues, setFormValues] = useState<ProductFormValues>(EMPTY_FORM_VALUES);
   const [formError, setFormError] = useState<string | null>(null);
-  const [rankings, setRankings] = useState<SAWResult[]>(() =>
-    calculateSAWRanking(INITIAL_PRODUCTS, INITIAL_WEIGHTS)
-  );
-  const [isResultStale, setIsResultStale] = useState<boolean>(false);
+  const [rankings, setRankings] = useState<SAWResult[]>([]);
+  const [isResultStale, setIsResultStale] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
+  const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
+  const [isSavingWeights, setIsSavingWeights] = useState(false);
 
-  const initialRenderRef = useRef<boolean>(true);
+  const hasHydratedRef = useRef(false);
 
   useEffect(() => {
-    if (initialRenderRef.current) {
-      initialRenderRef.current = false;
+    const loadInitialData = async () => {
+      setIsLoading(true);
+
+      try {
+        const [productsResponse, weightsResponse] = await Promise.all([
+          fetch("/api/products", { cache: "no-store" }),
+          fetch("/api/weights", { cache: "no-store" }),
+        ]);
+
+        const productsPayload = await productsResponse.json().catch(() => ({} as { products?: Product[]; error?: string }));
+        const weightsPayload = await weightsResponse.json().catch(() => ({} as { weights?: Weights; error?: string }));
+
+        if (!productsResponse.ok) {
+          throw new Error(productsPayload.error ?? "Gagal memuat data produk.");
+        }
+
+        if (!weightsResponse.ok) {
+          throw new Error(weightsPayload.error ?? "Gagal memuat bobot kriteria.");
+        }
+
+        const fetchedProducts = Array.isArray(productsPayload.products)
+          ? (productsPayload.products as Product[])
+          : [];
+
+        const fetchedWeights =
+          weightsPayload.weights && typeof weightsPayload.weights === "object"
+            ? (weightsPayload.weights as Weights)
+            : DEFAULT_WEIGHTS;
+
+        setProducts(fetchedProducts);
+        setWeights(fetchedWeights);
+        setRankings(calculateSAWRanking(fetchedProducts, fetchedWeights));
+        setLoadError(null);
+      } catch (error) {
+        console.error("Failed to load initial data", error);
+        setLoadError(
+          error instanceof Error
+            ? error.message
+            : "Terjadi kendala saat memuat data awal aplikasi."
+        );
+        setProducts([]);
+        setWeights(DEFAULT_WEIGHTS);
+        setRankings([]);
+      } finally {
+        hasHydratedRef.current = true;
+        setIsLoading(false);
+      }
+    };
+
+    void loadInitialData();
+  }, []);
+
+  useEffect(() => {
+    if (!hasHydratedRef.current) {
       return;
     }
 
@@ -171,6 +153,26 @@ export default function HomePage(): JSX.Element {
     });
   }, [formValues]);
 
+  const persistWeights = useCallback(async (nextWeights: Weights) => {
+    try {
+      setIsSavingWeights(true);
+      const response = await fetch("/api/weights", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nextWeights),
+      });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({} as { error?: string }));
+        console.error(payload.error ?? "Gagal menyimpan bobot ke server.");
+      }
+    } catch (error) {
+      console.error("Failed to persist weights", error);
+    } finally {
+      setIsSavingWeights(false);
+    }
+  }, []);
+
   const handleWeightChange = (key: keyof Weights) => (
     event: ChangeEvent<HTMLInputElement>
   ) => {
@@ -181,10 +183,18 @@ export default function HomePage(): JSX.Element {
       return;
     }
 
-    setWeights((previous) => ({
-      ...previous,
-      [key]: Math.max(0, numericValue),
-    }));
+    setWeights((previous) => {
+      const nextWeights = {
+        ...previous,
+        [key]: Math.max(0, numericValue),
+      } satisfies Weights;
+
+      if (hasHydratedRef.current) {
+        void persistWeights(nextWeights);
+      }
+
+      return nextWeights;
+    });
   };
 
   const handleFormValueChange = (
@@ -195,51 +205,95 @@ export default function HomePage(): JSX.Element {
     setFormError(null);
   };
 
-  const handleProductSubmit = (event: FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
+  const handleProductSubmit = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
-    const trimmedName = formValues.name.trim();
-    const profit = Number(formValues.profit);
-    const sales = Number(formValues.sales);
-    const cost = Number(formValues.cost);
+      const trimmedName = formValues.name.trim();
+      const profit = Number(formValues.profit);
+      const sales = Number(formValues.sales);
+      const cost = Number(formValues.cost);
 
-    if (!trimmedName) {
-      setFormError("Nama produk wajib diisi (min. 3 karakter).");
-      return;
-    }
+      if (!trimmedName) {
+        setFormError("Nama produk wajib diisi (min. 3 karakter).");
+        return;
+      }
 
-    if (
-      [profit, sales, cost].some(
-        (value) => !Number.isFinite(value) || value <= 0
-      )
-    ) {
-      setFormError(
-        "Keuntungan, jumlah penjualan, dan biaya produksi harus berupa angka positif."
-      );
-      return;
-    }
+      if ([profit, sales, cost].some((value) => !Number.isFinite(value) || value <= 0)) {
+        setFormError(
+          "Keuntungan, jumlah penjualan, dan biaya produksi harus berupa angka positif."
+        );
+        return;
+      }
 
-    const newProduct: Product = {
-      id: generateProductId(),
-      name: trimmedName,
-      profit,
-      sales,
-      cost,
-    };
+      setIsSubmittingProduct(true);
 
-    setProducts((previous) => [...previous, newProduct]);
-    setFormValues({ name: "", profit: "", sales: "", cost: "" });
-  };
+      try {
+        const response = await fetch("/api/products", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: trimmedName,
+            profit,
+            sales,
+            cost,
+          }),
+        });
 
-  const handleDeleteProduct = (productId: string): void => {
-    setProducts((previous) => previous.filter((product) => product.id !== productId));
-  };
+        const payload = await response.json().catch(() => ({} as { product?: Product; error?: string }));
 
-  const handleCalculateRanking = (): void => {
+        if (!response.ok) {
+          setFormError(payload.error ?? "Gagal menambahkan produk. Coba lagi.");
+          return;
+        }
+
+        if (!payload.product) {
+          throw new Error("Respon server tidak sesuai.");
+        }
+
+        setProducts((previous) => [...previous, payload.product as Product]);
+        setFormValues(EMPTY_FORM_VALUES);
+        setFormError(null);
+      } catch (error) {
+        console.error("Failed to submit product", error);
+        setFormError("Terjadi kendala saat menambahkan produk. Coba lagi.");
+      } finally {
+        setIsSubmittingProduct(false);
+      }
+    },
+    [formValues]
+  );
+
+  const handleDeleteProduct = useCallback(
+    async (productId: string) => {
+      setDeletingProductId(productId);
+
+      try {
+        const response = await fetch(`/api/products/${productId}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({} as { error?: string }));
+          console.error(payload.error ?? "Gagal menghapus produk.");
+          return;
+        }
+
+        setProducts((previous) => previous.filter((product) => product.id !== productId));
+      } catch (error) {
+        console.error("Failed to delete product", error);
+      } finally {
+        setDeletingProductId(null);
+      }
+    },
+    []
+  );
+
+  const handleCalculateRanking = useCallback(() => {
     const results = calculateSAWRanking(products, weights);
     setRankings(results);
     setIsResultStale(false);
-  };
+  }, [products, weights]);
 
   const hasProducts = products.length > 0;
   const canCalculate = isWeightValid && hasProducts;
@@ -254,17 +308,28 @@ export default function HomePage(): JSX.Element {
   );
 
   return (
-  <div className="min-h-screen bg-gradient-to-br from-[#113a7f] via-[#1d4d9f] to-[#f0f6ff] text-[#0a1d46]">
+    <div className="min-h-screen bg-gradient-to-br from-[#113a7f] via-[#1d4d9f] to-[#f0f6ff] text-[#0a1d46]">
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 lg:px-8">
-  <header className="rounded-3xl bg-gradient-to-br from-white/70 via-white/40 to-white/20 p-6 shadow-xl shadow-[#2f7bff1f] ring-1 ring-white/50 backdrop-blur-xl">
+        {isLoading && (
+          <div className="rounded-3xl border border-[#9bb8e8] bg-white/60 p-4 text-sm font-semibold text-[#1d3f7a] backdrop-blur">
+            Memuat data terbaru...
+          </div>
+        )}
+
+        {loadError && (
+          <div className="rounded-3xl border border-rose-200 bg-rose-50/80 p-4 text-sm font-semibold text-rose-700 backdrop-blur">
+            {loadError}
+          </div>
+        )}
+
+        <header className="rounded-3xl bg-gradient-to-br from-white/70 via-white/40 to-white/20 p-6 shadow-xl shadow-[#2f7bff1f] ring-1 ring-white/50 backdrop-blur-xl">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-[#0a1d46] sm:text-3xl">
                 Prioritas Produk UMKM · UMKM CEPOKO
               </h1>
               <p className="mt-1 max-w-2xl text-sm font-medium text-slate-800 sm:text-base">
-                Sesuaikan bobot kriteria, kelola daftar produk, lalu hitung peringkat
-                otomatis untuk menentukan prioritas pengembangan produk.
+                Sesuaikan bobot kriteria, kelola daftar produk, lalu hitung peringkat otomatis untuk menentukan prioritas pengembangan produk.
               </p>
             </div>
             <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-[#3560a0]">
@@ -281,6 +346,8 @@ export default function HomePage(): JSX.Element {
             totalWeightDisplay={totalWeightDisplay}
             isWeightValid={isWeightValid}
             onWeightChange={handleWeightChange}
+            isSaving={isSavingWeights}
+            isLoading={isLoading}
           />
           <ProductPanel
             products={products}
@@ -291,6 +358,9 @@ export default function HomePage(): JSX.Element {
             onFormValueChange={handleFormValueChange}
             onDeleteProduct={handleDeleteProduct}
             formatNumber={formatNumber}
+            isSubmitting={isSubmittingProduct}
+            deletingProductId={deletingProductId}
+            isLoading={isLoading}
           />
         </section>
 
