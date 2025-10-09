@@ -41,7 +41,7 @@ export default function RegisterPage(): JSX.Element {
       return;
     }
 
-    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+    if (!trimmedEmail || !trimmedEmail.includes("@")) {
       setFormError("Mohon isi email yang valid.");
       return;
     }
@@ -93,9 +93,10 @@ export default function RegisterPage(): JSX.Element {
     }
   };
 
+  const normalizedEmail = formValues.email.trim();
   const isFormValid =
     formValues.name.trim().length >= 3 &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formValues.email.trim()) &&
+    normalizedEmail.includes("@") &&
     formValues.password.trim().length >= 6 &&
     formValues.password.trim() === formValues.confirmPassword.trim();
 
@@ -140,6 +141,9 @@ export default function RegisterPage(): JSX.Element {
                 onChange={handleChange}
                 className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-3 text-base text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff]"
               />
+              <p className="text-xs font-medium text-[#3560a0]">
+                Pastikan alamat email valid dan berisi simbol @.
+              </p>
             </label>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -154,6 +158,9 @@ export default function RegisterPage(): JSX.Element {
                   onChange={handleChange}
                   className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-3 text-base text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff]"
                 />
+                <p className="text-xs font-medium text-[#3560a0]">
+                  Minimal 6 karakter dan mudah diingat oleh Anda.
+                </p>
               </label>
               <label className="flex flex-col gap-2 text-left">
                 <span className="text-sm font-semibold text-[#0a1d46]">Konfirmasi Kata Sandi</span>

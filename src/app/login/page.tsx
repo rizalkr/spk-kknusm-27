@@ -30,7 +30,7 @@ export default function LoginPage(): JSX.Element {
     const trimmedEmail = formValues.email.trim();
     const trimmedPassword = formValues.password.trim();
 
-    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+    if (!trimmedEmail || !trimmedEmail.includes("@")) {
       setFormError("Mohon isi email yang valid.");
       return;
     }
@@ -75,9 +75,10 @@ export default function LoginPage(): JSX.Element {
     }
   };
 
+  const normalizedEmail = formValues.email.trim();
   const isFormValid =
-    formValues.email.trim().length > 0 &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formValues.email.trim()) &&
+    normalizedEmail.length > 0 &&
+    normalizedEmail.includes("@") &&
     formValues.password.trim().length >= 6;
 
   return (
@@ -108,6 +109,9 @@ export default function LoginPage(): JSX.Element {
                 onChange={handleChange}
                 className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-3 text-base text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff]"
               />
+              <p className="text-xs font-medium text-[#3560a0]">
+                Gunakan alamat email yang valid (berisi simbol @).
+              </p>
             </label>
 
             <label className="flex flex-col gap-2 text-left">
@@ -121,6 +125,9 @@ export default function LoginPage(): JSX.Element {
                 onChange={handleChange}
                 className="w-full rounded-xl border border-white/40 bg-white/70 px-4 py-3 text-base text-[#0a1d46] shadow-inner focus:border-[#2f7bff] focus:outline-none focus:ring-2 focus:ring-[#6bb6ff]"
               />
+              <p className="text-xs font-medium text-[#3560a0]">
+                Minimal 6 karakter untuk keamanan akun Anda.
+              </p>
             </label>
 
             {formError && (
