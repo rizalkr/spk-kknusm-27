@@ -31,11 +31,11 @@ export function ProductPanel({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-xl font-bold text-[#0a1d46]">Panel Manajemen Produk</h2>
-          <p className="mt-1 text-sm font-medium text-slate-600">
+          <p className="mt-1 text-sm font-medium text-slate-800">
             Tambahkan produk baru, lengkapi data numerik, dan kelola daftar kandidat prioritas.
           </p>
         </div>
-        <span className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf] sm:self-end sm:text-right">
+        <span className="text-xs font-semibold uppercase tracking-wide text-slate-800 sm:self-end sm:text-right">
           Total Produk: {products.length}
         </span>
       </div>
@@ -104,7 +104,7 @@ export function ProductPanel({
               {formError}
             </p>
           ) : (
-            <p className="mb-3 text-xs font-semibold text-slate-600">
+            <p className="mb-3 text-xs font-semibold text-slate-800">
               Isi seluruh field di atas lalu klik tambah produk. Nilai numerik dapat menggunakan desimal.
             </p>
           )}
@@ -113,8 +113,8 @@ export function ProductPanel({
             disabled={!isFormValid}
             className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-auto ${
               isFormValid
-                ? "bg-[#2f7bff] text-white shadow-lg shadow-[#2f7bff33] hover:bg-[#1f62e0] focus-visible:outline-[#2f7bff]"
-                : "cursor-not-allowed bg-white/30 text-[#93a8cf]"
+                ? "bg-[#2ecbb0] text-[#063a32] shadow-lg shadow-[#2ecbb033] hover:bg-[#21b29b] focus-visible:outline-[#2ecbb0]"
+                : "cursor-not-allowed bg-[#d6f5ee] text-[#7dad9f]"
             }`}
           >
             <span>Tambah Produk</span>
@@ -145,14 +145,14 @@ export function ProductPanel({
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="space-y-1">
                   <h3 className="text-base font-bold text-[#0a1d46]">{product.name}</h3>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf]">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-800">
                     Produk Prioritas
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => onDeleteProduct(product.id)}
-                  className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-[#7a94bf] transition hover:border-[#ff5c8a4d] hover:bg-white/50 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a]"
+                  className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-slate-800 transition hover:border-[#ff5c8a4d] hover:bg-white/50 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a]"
                   aria-label={`Hapus ${product.name}`}
                 >
                   <svg
@@ -176,19 +176,19 @@ export function ProductPanel({
 
               <dl className="mt-4 grid grid-cols-2 gap-3 text-sm font-semibold text-[#1d3f7a]">
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf]">
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-slate-800">
                     Keuntungan
                   </dt>
                   <dd className="text-base">Rp&nbsp;{formatNumber(product.profit)}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf]">
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-slate-800">
                     Penjualan
                   </dt>
                   <dd className="text-base">{formatNumber(product.sales)} unit</dd>
                 </div>
                 <div className="col-span-2">
-                  <dt className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf]">
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-slate-800">
                     Biaya Produksi
                   </dt>
                   <dd className="text-base">Rp&nbsp;{formatNumber(product.cost)}</dd>
@@ -197,7 +197,7 @@ export function ProductPanel({
             </div>
           ))
         ) : (
-          <div className="rounded-2xl border border-white/35 bg-white/25 p-4 text-center text-sm font-semibold text-[#7a94bf] backdrop-blur">
+          <div className="rounded-2xl border border-white/35 bg-white/25 p-4 text-center text-sm font-semibold text-slate-800 backdrop-blur">
             Belum ada produk terdaftar. Tambahkan minimal satu produk untuk memulai perhitungan.
           </div>
         )}
@@ -234,7 +234,7 @@ export function ProductPanel({
                     <button
                       type="button"
                       onClick={() => onDeleteProduct(product.id)}
-                      className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-[#7a94bf] transition hover:border-[#ff5c8a4d] hover:bg-white/40 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a]"
+                      className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-slate-800 transition hover:border-[#ff5c8a4d] hover:bg-white/40 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a]"
                       aria-label={`Hapus ${product.name}`}
                     >
                       <svg
@@ -260,7 +260,7 @@ export function ProductPanel({
               {!hasProducts && (
                 <tr>
                   <td
-                    className="px-4 py-6 text-center text-sm text-[#7a94bf]"
+                    className="px-4 py-6 text-center text-sm text-slate-800"
                     colSpan={5}
                   >
                     Belum ada produk terdaftar. Tambahkan minimal satu produk untuk memulai perhitungan.

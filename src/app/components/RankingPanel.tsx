@@ -25,7 +25,7 @@ export function RankingPanel({
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h2 className="text-xl font-bold text-[#0a1d46]">Panel Hasil Peringkat</h2>
-          <p className="mt-1 text-sm font-medium text-slate-600">
+          <p className="mt-1 text-sm font-medium text-slate-800">
             Klik tombol di bawah untuk menjalankan kalkulasi SAW dan lihat prioritas produk berdasarkan skor akhir.
           </p>
         </div>
@@ -77,7 +77,7 @@ export function RankingPanel({
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-[#7a94bf]">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-800">
                     Peringkat
                   </p>
                   <p className="text-2xl font-bold text-[#1d3f7a]">#{result.rank}</p>
@@ -92,7 +92,7 @@ export function RankingPanel({
             </div>
           ))
         ) : (
-          <div className="rounded-2xl border border-white/35 bg-white/25 p-4 text-center text-sm font-semibold text-[#7a94bf] backdrop-blur">
+          <div className="rounded-2xl border border-white/35 bg-white/25 p-4 text-center text-sm font-semibold text-slate-800 backdrop-blur">
             Belum ada hasil yang dapat ditampilkan. Tambahkan produk dan lakukan kalkulasi untuk melihat peringkat.
           </div>
         )}
@@ -125,7 +125,7 @@ export function RankingPanel({
               {rankings.length === 0 && (
                 <tr>
                   <td
-                    className="px-4 py-6 text-center text-sm text-[#7a94bf]"
+                    className="px-4 py-6 text-center text-sm text-slate-800"
                     colSpan={3}
                   >
                     Belum ada hasil yang dapat ditampilkan. Tambahkan produk dan lakukan kalkulasi untuk melihat peringkat.

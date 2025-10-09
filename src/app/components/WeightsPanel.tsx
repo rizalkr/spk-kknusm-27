@@ -23,7 +23,7 @@ export function WeightsPanel({
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-xl font-bold text-[#0a1d46]">Panel Bobot Kriteria</h2>
-          <p className="mt-1 text-sm font-medium text-slate-600">
+          <p className="mt-1 text-sm font-medium text-slate-800">
             Masukkan bobot (%) untuk setiap kriteria. Total bobot wajib sama dengan 100.
           </p>
         </div>
@@ -41,7 +41,7 @@ export function WeightsPanel({
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <label className="flex flex-col gap-2">
           <span className="text-sm font-semibold text-[#0a1d46]">
-            Keuntungan <span className="text-xs font-medium text-[#7a94bf]">(Benefit)</span>
+            Keuntungan <span className="text-xs font-medium text-slate-800">(Benefit)</span>
           </span>
           <input
             type="number"
@@ -56,7 +56,7 @@ export function WeightsPanel({
         </label>
         <label className="flex flex-col gap-2">
           <span className="text-sm font-semibold text-[#0a1d46]">
-            Jumlah Penjualan <span className="text-xs font-medium text-[#7a94bf]">(Benefit)</span>
+            Jumlah Penjualan <span className="text-xs font-medium text-slate-800">(Benefit)</span>
           </span>
           <input
             type="number"
@@ -71,7 +71,7 @@ export function WeightsPanel({
         </label>
         <label className="flex flex-col gap-2">
           <span className="text-sm font-semibold text-[#0a1d46]">
-            Biaya Produksi <span className="text-xs font-medium text-[#7a94bf]">(Cost)</span>
+            Biaya Produksi <span className="text-xs font-medium text-slate-800">(Cost)</span>
           </span>
           <input
             type="number"

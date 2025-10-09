@@ -14,6 +14,7 @@ import {
 import { ProductPanel } from "./components/ProductPanel";
 import { RankingPanel } from "./components/RankingPanel";
 import { WeightsPanel } from "./components/WeightsPanel";
+import { FooterPanel } from "./components/FooterPanel";
 import type {
   Product,
   ProductFormValues,
@@ -259,17 +260,17 @@ export default function HomePage(): JSX.Element {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-[#0a1d46] sm:text-3xl">
-                Prioritas Produk UMKM · Metode SAW
+                Prioritas Produk UMKM · UMKM CEPOKO
               </h1>
-              <p className="mt-1 max-w-2xl text-sm font-medium text-slate-600 sm:text-base">
+              <p className="mt-1 max-w-2xl text-sm font-medium text-slate-800 sm:text-base">
                 Sesuaikan bobot kriteria, kelola daftar produk, lalu hitung peringkat
                 otomatis untuk menentukan prioritas pengembangan produk.
               </p>
             </div>
             <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-[#3560a0]">
-              <span className="rounded-full border border-[#9bb8e8] bg-white/60 px-3 py-1 font-semibold text-[#1d3f7a]">Client-side</span>
-              <span className="rounded-full border border-[#9bb8e8] bg-white/60 px-3 py-1 font-semibold text-[#1d3f7a]">Simple Additive Weighting</span>
-              <span className="rounded-full border border-[#9bb8e8] bg-white/60 px-3 py-1 font-semibold text-[#1d3f7a]">Next.js · TSX</span>
+              <span className="rounded-full border border-[#9bb8e8] bg-white/60 px-3 py-1 font-semibold text-[#1d3f7a]">UMKM</span>
+              <span className="rounded-full border border-[#9bb8e8] bg-white/60 px-3 py-1 font-semibold text-[#1d3f7a]">CEPOKO</span>
+              <span className="rounded-full border border-[#9bb8e8] bg-white/60 px-3 py-1 font-semibold text-[#1d3f7a]">Produk Prioritas</span>
             </div>
           </div>
         </header>
@@ -301,6 +302,8 @@ export default function HomePage(): JSX.Element {
           onCalculate={handleCalculateRanking}
           formatScore={formatScore}
         />
+
+        <FooterPanel />
       </main>
     </div>
   );
