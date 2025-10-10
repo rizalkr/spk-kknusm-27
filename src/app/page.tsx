@@ -12,6 +12,12 @@ import { useUserProfile } from "./hooks/useUserProfile";
 
 export default function HomePage(): JSX.Element {
   const {
+    user,
+    isLoading: isLoadingUser,
+    error: userError,
+  } = useUserProfile();
+
+  const {
     weights,
     products,
     formValues,
@@ -35,13 +41,14 @@ export default function HomePage(): JSX.Element {
     handleProductSubmit,
     handleDeleteProduct,
     handleCalculateRanking,
-  } = useSawDashboard();
+    isUserAuthenticated,
+  } = useSawDashboard({ currentUserId: user?.id ?? null });
 
-  const {
-    user,
-    isLoading: isLoadingUser,
-    error: userError,
-  } = useUserProfile();
+  const productAuthMessage = isUserAuthenticated
+    ? null
+    : isLoadingUser
+    ? "Memeriksa sesi pengguna..."
+    : "Masuk terlebih dahulu untuk menambahkan dan mengelola produk.";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#113a7f] via-[#1d4d9f] to-[#f0f6ff] text-[#0a1d46]">
@@ -99,6 +106,8 @@ export default function HomePage(): JSX.Element {
             isSubmitting={isSubmittingProduct}
             deletingProductId={deletingProductId}
             isLoading={isLoading}
+            isUserAuthenticated={isUserAuthenticated}
+            authMessage={productAuthMessage}
           />
         </section>
 

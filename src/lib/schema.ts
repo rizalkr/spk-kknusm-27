@@ -1,13 +1,22 @@
-import { pgTable, text, numeric, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, text, numeric, timestamp, uniqueIndex, index } from "drizzle-orm/pg-core";
 
-export const products = pgTable("products", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  profit: numeric("profit").notNull(),
-  sales: numeric("sales").notNull(),
-  cost: numeric("cost").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+export const products = pgTable(
+  "products",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    profit: numeric("profit").notNull(),
+    sales: numeric("sales").notNull(),
+    cost: numeric("cost").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    userIdx: index("products_user_idx").on(table.userId),
+  })
+);
 
 export const weights = pgTable("weights", {
   id: text("id").primaryKey(),

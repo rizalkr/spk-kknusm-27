@@ -4,6 +4,7 @@ export type Product = {
   profit: number;
   sales: number;
   cost: number;
+  userId: string;
 };
 
 export type Weights = {

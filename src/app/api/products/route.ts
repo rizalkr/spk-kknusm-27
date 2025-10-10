@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
-import { asc } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import type { Product } from "@/app/types";
 
@@ -12,13 +12,25 @@ const mapProduct = (row: typeof schema.products.$inferSelect): Product => ({
   profit: toNumber(row.profit),
   sales: toNumber(row.sales),
   cost: toNumber(row.cost),
+  userId: row.userId,
 });
 
-export async function GET(): Promise<Response> {
+export async function GET(request: Request): Promise<Response> {
+  const { searchParams } = new URL(request.url);
+  const userId = searchParams.get("userId");
+
+  if (!userId) {
+    return NextResponse.json(
+      { error: "Parameter userId wajib disertakan." },
+      { status: 400 }
+    );
+  }
+
   try {
     const records = await db
       .select()
       .from(schema.products)
+      .where(eq(schema.products.userId, userId))
       .orderBy(asc(schema.products.createdAt));
 
     return NextResponse.json({
@@ -37,11 +49,19 @@ export async function POST(request: Request): Promise<Response> {
     const profitInput: unknown = body?.profit;
     const salesInput: unknown = body?.sales;
     const costInput: unknown = body?.cost;
+    const userIdInput: unknown = body?.userId;
 
     if (typeof name !== "string" || name.trim().length < 3) {
       return NextResponse.json(
         { error: "Nama produk wajib diisi minimal 3 karakter." },
         { status: 400 }
+      );
+    }
+
+    if (typeof userIdInput !== "string" || userIdInput.trim().length === 0) {
+      return NextResponse.json(
+        { error: "Pengguna tidak valid. Silakan masuk kembali." },
+        { status: 401 }
       );
     }
 
@@ -56,6 +76,21 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
+    const normalizedUserId = userIdInput.trim();
+
+    const [user] = await db
+      .select({ id: schema.users.id })
+      .from(schema.users)
+      .where(eq(schema.users.id, normalizedUserId))
+      .limit(1);
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Pengguna tidak ditemukan." },
+        { status: 404 }
+      );
+    }
+
     const [inserted] = await db
       .insert(schema.products)
       .values({
@@ -64,6 +99,7 @@ export async function POST(request: Request): Promise<Response> {
         profit: parsedProfit.toString(),
         sales: parsedSales.toString(),
         cost: parsedCost.toString(),
+        userId: normalizedUserId,
       })
       .returning();
 

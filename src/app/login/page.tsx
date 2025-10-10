@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, type ChangeEvent, type FormEvent, type JSX } from "react";
 
 type LoginFormState = {
@@ -9,6 +10,7 @@ type LoginFormState = {
 };
 
 export default function LoginPage(): JSX.Element {
+  const router = useRouter();
   const [formValues, setFormValues] = useState<LoginFormState>({
     email: "",
     password: "",
@@ -66,6 +68,10 @@ export default function LoginPage(): JSX.Element {
       }
 
       setInfoMessage(payload.message ?? "Login berhasil.");
+
+      setTimeout(() => {
+        router.push("/");
+      }, 400);
     } catch (error) {
       console.error("Login error", error);
       setFormError("Terjadi kendala jaringan. Mohon coba lagi nanti.");

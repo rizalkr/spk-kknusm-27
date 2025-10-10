@@ -15,6 +15,8 @@ export type ProductPanelProps = {
   isSubmitting?: boolean;
   deletingProductId?: string | null;
   isLoading?: boolean;
+  isUserAuthenticated: boolean;
+  authMessage?: string | null;
 };
 
 export function ProductPanel({
@@ -29,8 +31,25 @@ export function ProductPanel({
   isSubmitting = false,
   deletingProductId = null,
   isLoading = false,
+  isUserAuthenticated,
+  authMessage = null,
 }: ProductPanelProps): JSX.Element {
   const hasProducts = products.length > 0;
+  const canSubmit = isFormValid && isUserAuthenticated && !isSubmitting;
+
+  const helperMessage = formError
+    ? (
+        <p className="mb-3 rounded-xl border border-[#f7b74066] bg-white/75 px-4 py-3 text-sm font-semibold text-[#b6801a] backdrop-blur">
+          {formError}
+        </p>
+      )
+    : (
+        <p className="mb-3 text-xs font-semibold text-slate-800">
+          {isUserAuthenticated
+            ? "Isi seluruh field di atas lalu klik tambah produk. Nilai numerik dapat menggunakan desimal."
+            : authMessage ?? "Masuk terlebih dahulu untuk menambahkan dan mengelola produk."}
+        </p>
+      );
 
   return (
     <div className="rounded-3xl bg-gradient-to-br from-white/65 via-white/35 to-white/15 p-6 shadow-xl shadow-[#2f7bff1f] ring-1 ring-white/45 backdrop-blur-xl">
@@ -105,25 +124,23 @@ export function ProductPanel({
         </label>
 
         <div className="sm:col-span-2 lg:col-span-4">
-          {formError ? (
-            <p className="mb-3 rounded-xl border border-[#f7b74066] bg-white/75 px-4 py-3 text-sm font-semibold text-[#b6801a] backdrop-blur">
-              {formError}
-            </p>
-          ) : (
-            <p className="mb-3 text-xs font-semibold text-slate-800">
-              Isi seluruh field di atas lalu klik tambah produk. Nilai numerik dapat menggunakan desimal.
-            </p>
-          )}
+          {helperMessage}
           <button
             type="submit"
-            disabled={!isFormValid || isSubmitting}
+            disabled={!canSubmit}
             className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-auto ${
-              isFormValid && !isSubmitting
+              canSubmit
                 ? "bg-[#2ecbb0] text-[#063a32] shadow-lg shadow-[#2ecbb033] hover:bg-[#21b29b] focus-visible:outline-[#2ecbb0]"
                 : "cursor-not-allowed bg-[#d6f5ee] text-[#7dad9f]"
             }`}
           >
-            <span>{isSubmitting ? "Menyimpan..." : "Tambah Produk"}</span>
+            <span>
+              {isSubmitting
+                ? "Menyimpan..."
+                : isUserAuthenticated
+                ? "Tambah Produk"
+                : "Masuk untuk Menambah"}
+            </span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -158,7 +175,7 @@ export function ProductPanel({
                 <button
                   type="button"
                   onClick={() => onDeleteProduct(product.id)}
-                  disabled={deletingProductId === product.id}
+                  disabled={deletingProductId === product.id || !isUserAuthenticated}
                   className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-slate-800 transition hover:border-[#ff5c8a4d] hover:bg-white/50 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a] disabled:cursor-not-allowed disabled:opacity-60"
                   aria-label={`Hapus ${product.name}`}
                 >
@@ -205,7 +222,9 @@ export function ProductPanel({
           ))
         ) : (
           <div className="rounded-2xl border border-white/35 bg-white/25 p-4 text-center text-sm font-semibold text-slate-800 backdrop-blur">
-            {isLoading
+            {!isUserAuthenticated
+              ? authMessage ?? "Masuk terlebih dahulu untuk menambahkan dan mengelola produk."
+              : isLoading
               ? "Memuat data produk dari server..."
               : "Belum ada produk terdaftar. Tambahkan minimal satu produk untuk memulai perhitungan."}
           </div>
@@ -243,7 +262,7 @@ export function ProductPanel({
                     <button
                       type="button"
                       onClick={() => onDeleteProduct(product.id)}
-                      disabled={deletingProductId === product.id}
+                      disabled={deletingProductId === product.id || !isUserAuthenticated}
                       className="inline-flex items-center justify-center rounded-lg border border-transparent p-2 text-slate-800 transition hover:border-[#ff5c8a4d] hover:bg-white/40 hover:text-[#ff5c8a] focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a] disabled:cursor-not-allowed disabled:opacity-60"
                       aria-label={`Hapus ${product.name}`}
                     >
@@ -273,7 +292,9 @@ export function ProductPanel({
                     className="px-4 py-6 text-center text-sm text-slate-800"
                     colSpan={5}
                   >
-                    {isLoading
+                    {!isUserAuthenticated
+                      ? authMessage ?? "Masuk terlebih dahulu untuk menambahkan dan mengelola produk."
+                      : isLoading
                       ? "Memuat data produk dari server..."
                       : "Belum ada produk terdaftar. Tambahkan minimal satu produk untuk memulai perhitungan."}
                   </td>

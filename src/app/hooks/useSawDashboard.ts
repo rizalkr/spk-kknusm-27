@@ -27,6 +27,10 @@ const scoreFormatter = new Intl.NumberFormat("id-ID", {
   maximumFractionDigits: 4,
 });
 
+type UseSawDashboardOptions = {
+  currentUserId: string | null;
+};
+
 type FetchProductsResponse = {
   products?: Product[];
   error?: string;
@@ -61,9 +65,10 @@ type UseSawDashboardReturn = {
   handleProductSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
   handleDeleteProduct: (productId: string) => Promise<void>;
   handleCalculateRanking: () => void;
+  isUserAuthenticated: boolean;
 };
 
-export function useSawDashboard(): UseSawDashboardReturn {
+export function useSawDashboard({ currentUserId }: UseSawDashboardOptions): UseSawDashboardReturn {
   const [weights, setWeights] = useState<Weights>(DEFAULT_WEIGHTS);
   const [products, setProducts] = useState<Product[]>([]);
   const [formValues, setFormValues] = useState<ProductFormValues>(EMPTY_FORM_VALUES);
@@ -83,37 +88,44 @@ export function useSawDashboard(): UseSawDashboardReturn {
       setIsLoading(true);
 
       try {
-        const [productsResponse, weightsResponse] = await Promise.all([
-          fetch("/api/products", { cache: "no-store" }),
-          fetch("/api/weights", { cache: "no-store" }),
-        ]);
-
-        const productsPayload = (await productsResponse
-          .json()
-          .catch(() => ({}))) as FetchProductsResponse;
+        const weightsResponse = await fetch("/api/weights", { cache: "no-store" });
         const weightsPayload = (await weightsResponse
           .json()
           .catch(() => ({}))) as FetchWeightsResponse;
 
-        if (!productsResponse.ok) {
-          throw new Error(productsPayload.error ?? "Gagal memuat data produk.");
-        }
-
         if (!weightsResponse.ok) {
           throw new Error(weightsPayload.error ?? "Gagal memuat bobot kriteria.");
         }
-
-        const fetchedProducts = Array.isArray(productsPayload.products)
-          ? productsPayload.products
-          : [];
 
         const fetchedWeights =
           weightsPayload.weights && typeof weightsPayload.weights === "object"
             ? weightsPayload.weights
             : DEFAULT_WEIGHTS;
 
-        setProducts(fetchedProducts);
+        let fetchedProducts: Product[] = [];
+
+        if (currentUserId) {
+          const productsResponse = await fetch(
+            `/api/products?userId=${encodeURIComponent(currentUserId)}`,
+            { cache: "no-store" }
+          );
+          const productsPayload = (await productsResponse
+            .json()
+            .catch(() => ({}))) as FetchProductsResponse;
+
+          if (!productsResponse.ok) {
+            throw new Error(productsPayload.error ?? "Gagal memuat data produk.");
+          }
+
+          fetchedProducts = Array.isArray(productsPayload.products)
+            ? productsPayload.products
+            : [];
+        } else {
+          fetchedProducts = [];
+        }
+
         setWeights(fetchedWeights);
+        setProducts(fetchedProducts);
         setRankings(calculateSAWRanking(fetchedProducts, fetchedWeights));
         setLoadError(null);
       } catch (error) {
@@ -133,7 +145,7 @@ export function useSawDashboard(): UseSawDashboardReturn {
     };
 
     void loadInitialData();
-  }, []);
+  }, [currentUserId]);
 
   useEffect(() => {
     if (!hasHydratedRef.current) {
@@ -238,6 +250,11 @@ export function useSawDashboard(): UseSawDashboardReturn {
       const sales = Number(formValues.sales);
       const cost = Number(formValues.cost);
 
+      if (!currentUserId) {
+        setFormError("Silakan masuk untuk menambahkan produk.");
+        return;
+      }
+
       if (!trimmedName) {
         setFormError("Nama produk wajib diisi (min. 3 karakter).");
         return;
@@ -261,6 +278,7 @@ export function useSawDashboard(): UseSawDashboardReturn {
             profit,
             sales,
             cost,
+            userId: currentUserId,
           }),
         });
 
@@ -288,14 +306,19 @@ export function useSawDashboard(): UseSawDashboardReturn {
         setIsSubmittingProduct(false);
       }
     },
-    [formValues]
+    [formValues, currentUserId]
   );
 
   const handleDeleteProduct = useCallback(async (productId: string) => {
+    if (!currentUserId) {
+      setFormError("Silakan masuk untuk mengelola produk.");
+      return;
+    }
+
     setDeletingProductId(productId);
 
     try {
-      const response = await fetch(`/api/products/${productId}`, {
+      const response = await fetch(`/api/products/${productId}?userId=${encodeURIComponent(currentUserId)}`, {
         method: "DELETE",
       });
 
@@ -313,7 +336,7 @@ export function useSawDashboard(): UseSawDashboardReturn {
     } finally {
       setDeletingProductId(null);
     }
-  }, []);
+  }, [currentUserId]);
 
   const handleCalculateRanking = useCallback(() => {
     const results = calculateSAWRanking(products, weights);
@@ -334,6 +357,8 @@ export function useSawDashboard(): UseSawDashboardReturn {
     (value: number) => scoreFormatter.format(value),
     []
   );
+
+  const isUserAuthenticated = Boolean(currentUserId);
 
   return {
     weights,
@@ -359,5 +384,6 @@ export function useSawDashboard(): UseSawDashboardReturn {
     handleProductSubmit,
     handleDeleteProduct,
     handleCalculateRanking,
+    isUserAuthenticated,
   };
 }
