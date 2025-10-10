@@ -8,6 +8,7 @@ export type UsersPanelProps = {
   user: User | null;
   isLoading: boolean;
   error: string | null;
+  onLogout?: () => void;
 };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -18,7 +19,13 @@ const ROLE_LABELS: Record<string, string> = {
 
 const formatRole = (role: string): string => ROLE_LABELS[role] ?? role;
 
-export function UsersPanel({ user, isLoading, error }: UsersPanelProps): JSX.Element {
+export function UsersPanel({ user, isLoading, error, onLogout }: UsersPanelProps): JSX.Element {
+  const handleLogout = () => {
+    if (typeof onLogout === "function") {
+      onLogout();
+    }
+  };
+
   return (
     <div className="rounded-3xl bg-gradient-to-br from-white/65 via-white/35 to-white/15 p-6 shadow-xl shadow-[#2f7bff1f] ring-1 ring-white/45 backdrop-blur-xl">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -48,11 +55,11 @@ export function UsersPanel({ user, isLoading, error }: UsersPanelProps): JSX.Ele
         ) : user ? (
           <div className="rounded-2xl border border-white/35 bg-white/40 p-6 shadow-lg shadow-[#2f7bff1f] backdrop-blur">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
+              <div className="space-y-1">
                 <p className="text-xs font-semibold uppercase tracking-wide text-[#3560a0]">
                   Nama Pengguna
                 </p>
-                <h3 className="mt-1 text-xl font-bold text-[#0a1d46]">{user.name}</h3>
+                <h3 className="text-xl font-bold text-[#0a1d46]">{user.name}</h3>
               </div>
               <span className="inline-flex items-center gap-2 rounded-full border border-[#9bb8e8] bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#1d3f7a]">
                 {formatRole(user.role)}
@@ -70,6 +77,32 @@ export function UsersPanel({ user, isLoading, error }: UsersPanelProps): JSX.Ele
                 </dd>
               </div>
             </dl>
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-800">
+                Kelola sesi Anda
+              </p>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex items-center gap-2 rounded-xl border border-[#ff5c8a3d] bg-white/70 px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#c03e62] shadow-lg shadow-[#ff5c8a26] transition hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff5c8a]"
+              >
+                Keluar
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-4 w-4"
+                >
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                  <polyline points="10 17 15 12 10 7" />
+                  <line x1="15" x2="3" y1="12" y2="12" />
+                </svg>
+              </button>
+            </div>
           </div>
         ) : (
           <div className="rounded-2xl border border-white/35 bg-white/35 p-6 text-center shadow-lg shadow-[#2f7bff1f] backdrop-blur">

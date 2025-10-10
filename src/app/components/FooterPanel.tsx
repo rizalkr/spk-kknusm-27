@@ -50,7 +50,7 @@ export function FooterPanel(): JSX.Element {
 					</a>
 
 					<a
-						href="https://wa.me/6281234567890"
+						href="https://wa.me/6285191294341"
 						target="_blank"
 						rel="noopener noreferrer"
 						className="group inline-flex items-center gap-3 rounded-2xl border border-white/35 bg-white/35 px-5 py-4 text-left shadow-lg shadow-[#2f7bff1f] transition hover:border-[#21b29b66] hover:bg-white/50 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#21b29b]"

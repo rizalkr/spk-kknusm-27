@@ -59,12 +59,26 @@ export default function LoginPage(): JSX.Element {
       const payload = (await response.json().catch(() => ({}))) as {
         message?: string;
         error?: string;
+        user?: {
+          id: string;
+        };
       };
 
       if (!response.ok) {
         setFormError(payload.error ?? "Login gagal. Mohon periksa kembali kredensial Anda.");
         setInfoMessage(null);
         return;
+      }
+
+      if (payload.user?.id && typeof window !== "undefined") {
+        try {
+          window.localStorage.setItem(
+            "cepoko-auth",
+            JSON.stringify({ userId: payload.user.id })
+          );
+        } catch (error) {
+          console.error("Failed to persist session", error);
+        }
       }
 
       setInfoMessage(payload.message ?? "Login berhasil.");
