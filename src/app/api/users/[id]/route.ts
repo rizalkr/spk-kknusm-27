@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 
 export async function DELETE(
-  _request: Request,
-  context: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<Response> {
-  const userId = context.params.id;
+  const { id: userId } = await params;
 
   if (!userId) {
     return NextResponse.json({ error: "ID pengguna tidak valid." }, { status: 400 });

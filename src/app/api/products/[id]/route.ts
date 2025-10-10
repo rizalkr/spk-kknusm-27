@@ -1,12 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 
 export async function DELETE(
-  request: Request,
-  context: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<Response> {
-  const productId = context.params.id;
+  const productParams = await params;
+  const productId = productParams.id;
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get("userId");
 

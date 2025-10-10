@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { asc, eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import type { Product } from "@/app/types";
@@ -15,7 +15,7 @@ const mapProduct = (row: typeof schema.products.$inferSelect): Product => ({
   userId: row.userId,
 });
 
-export async function GET(request: Request): Promise<Response> {
+export async function GET(request: NextRequest): Promise<Response> {
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get("userId");
 
@@ -42,7 +42,7 @@ export async function GET(request: Request): Promise<Response> {
   }
 }
 
-export async function POST(request: Request): Promise<Response> {
+export async function POST(request: NextRequest): Promise<Response> {
   try {
     const body = await request.json();
     const name: unknown = body?.name;
